@@ -29,10 +29,9 @@
 #Example:
 # make OptLIB=3 OptSRC=0 all tshow
 
-TOP=$(shell readlink -f "$(dir $(lastword $(MAKEFILE_LIST)))")
+TOP=$(shell greadlink -f "$(dir $(lastword $(MAKEFILE_LIST)))")
 PROGRAM=main
 LIBDIR=$(TOP)/libs
-
 #Adust the following line to the library in use
 STMLIB=$(LIBDIR)/STM32_USB-FS-Device_Lib_V4.0.0/Libraries
 #Adjust TypeOfMCU in use, see CMSIS file "stm32f10x.h"
@@ -50,7 +49,7 @@ LD=$(TC)-ld -v
 OBJCOPY=$(TC)-objcopy
 AR=$(TC)-ar
 GDB=$(TC)-gdb
-INCLUDE=-I$(TOP)/inc
+INCLUDE=-I$(TOP)/src
 INCLUDE+=-I$(STMLIB)/CMSIS/Include
 INCLUDE+=-I$(STMLIB)/CMSIS/Device/ST/STM32F10x/Include
 INCLUDE+=-I$(STMLIB)/CMSIS/Device/ST/STM32F10x/Source/Templates

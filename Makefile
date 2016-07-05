@@ -1,7 +1,7 @@
 # general Makefile
 # make OptLIB=0 OptSRC=0 all tshow  
 include Makefile.common
-LDFLAGS=$(COMMONFLAGS) -fno-exceptions -ffunction-sections -fdata-sections -L$(LIBDIR) -nostartfiles -Wl,--gc-sections,-Tlinker.ld
+LDFLAGS=$(COMMONFLAGS) --specs=nano.specs --specs=nosys.specs -fno-exceptions -fno-builtin -ffunction-sections -fdata-sections -L$(LIBDIR) -nostartfiles -Wl,--gc-sections,-Tlinker.ld
 
 LDLIBS+=-lm
 LDLIBS+=-lstm32
@@ -35,9 +35,10 @@ clean:
 	rm -f $(PROGRAM).info_code
 	rm -f $(PROGRAM).info_symbol
 tshow:
-		@echo "######################################################################################################"
-		@echo "################# optimize settings: $(InfoTextLib), $(InfoTextSrc)"
-		@echo "######################################################################################################"
+	@echo "######################################################################################################"
+	@echo "################# optimize settings: $(InfoTextLib), $(InfoTextSrc)"
+	@echo "######################################################################################################"
+	@echo "$(TOP)"
 
 flash:all
 	./do_flash.pl $(TOP)/main.bin  

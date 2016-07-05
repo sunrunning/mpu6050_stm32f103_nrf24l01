@@ -8,6 +8,18 @@
 #include "stm32f10x.h"
 #include "stm32f10x_rcc.h"
 #include "stm32f10x_gpio.h"
+#include <stdio.h>
+
+#include "uart.h"
+#include "spi.h"
+
+void Bsp_Init(void)
+{
+	//Usart_Init();
+	//Spi_Init();
+	return;
+} 
+
 int main(int argc, char *argv[])
 {
  	GPIO_InitTypeDef GPIO_InitStructure;
@@ -24,6 +36,9 @@ int main(int argc, char *argv[])
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz; // slow rise time
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP; // push-pull output
 	GPIO_Init(GPIOA, &GPIO_InitStructure); // GPIOD init
+	Bsp_Init();
+	Usart_Init();
+	Spi_Init();
 	while(1)
 	{
 		/* make some float calculations */
@@ -55,6 +70,7 @@ int main(int argc, char *argv[])
 			delay--;
 			__NOP();
 		}
+		printf("testing\n\r");
 	}
 
 }
