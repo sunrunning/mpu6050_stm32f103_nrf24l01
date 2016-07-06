@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
 			delay--;
 			__NOP();
 		}
-		printf("testing\n\r");
+		iprintf("testing\n\r");
 	}
 
 }

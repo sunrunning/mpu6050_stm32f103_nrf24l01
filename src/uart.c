@@ -25,7 +25,7 @@
 #define STDIN_USART 1
 #endif
 
-#define COM1 0//USART1
+#define COM1 USART1
 #undef errno
 extern int errno;
 
