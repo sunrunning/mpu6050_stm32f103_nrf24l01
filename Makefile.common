@@ -29,7 +29,7 @@
 #Example:
 # make OptLIB=3 OptSRC=0 all tshow
 
-TOP=$(shell readlink -f "$(dir $(lastword $(MAKEFILE_LIST)))")
+TOP=$(shell greadlink -f "$(dir $(lastword $(MAKEFILE_LIST)))")
 PROGRAM=main
 LIBDIR=$(TOP)/libs
 #Adust the following line to the library in use

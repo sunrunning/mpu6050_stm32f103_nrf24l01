@@ -7,14 +7,14 @@ MEMORY {
 	/*STM32F103RET --> 64K*/
 	/*STM32F103ZET --> 64K*/
 	RAM (RWX) : ORIGIN = 0x20000000 , LENGTH = 64K
-	EXTSRAM (RWX) : ORIGIN = 0x68000000 , LENGTH = 0
+	/*EXTSRAM (RWX) : ORIGIN = 0x68000000 , LENGTH = 0*/
 	/*Adust LENGTH to (FLASHsize - FeePROMsize) of target MCU:*/
 	/*STM32F103RBT --> 126K*/
 	/*FLASH (RX) : ORIGIN = 0x08000000 , LENGTH = 126K*/
 	/*STM32F103RET --> 508K*/
 	/*FLASH (RX) : ORIGIN = 0x08000000 , LENGTH = 508K*/
 	/*STM32F103RCT --> 508K*/
-	FLASH (RX) : ORIGIN = 0x08000000 , LENGTH = 508K
+	FLASH (RWX) : ORIGIN = 0x08000000 , LENGTH = 508K
 	/*STM32F103ZET --> 508K*/
 	/*FLASH (RX) : ORIGIN = 0x08000000 , LENGTH = 508K*/
 	/*Adust ORIGIN to (0x08000000 + (FLASHsize-FeePROMsize)) of target MCU*/
@@ -24,11 +24,11 @@ MEMORY {
 	/*STM32F103RET --> 0x08000000+508K, 4K*/
 	/*EEMUL (RWX) : ORIGIN = 0x08000000+508K, LENGTH = 4K*/
 	/*STM32F103RCT --> 0x08000000+508K, 4K*/
-	EEMUL (RWX) : ORIGIN = 0x08000000+508K, LENGTH = 4K
+	/*EEMUL (RWX) : ORIGIN = 0x08000000+508K, LENGTH = 4K*/
 }
 _estack	= ORIGIN(RAM)+LENGTH(RAM);	/* end of the stack */
 _seemul = ORIGIN(EEMUL);	/* start of the eeprom emulation area */
-_min_stack	= 0x100;	/* minimum stack space to reserve for the user app */
+_min_stack	= 0x400;	/* minimum stack space to reserve for the user app */
 /* check valid alignment for the vector table */
 ASSERT(ORIGIN(FLASH) == ALIGN(ORIGIN(FLASH), 0x80), "Start of memory region flash not aligned for startup vector table");
 SECTIONS {

@@ -36,9 +36,14 @@ int main(int argc, char *argv[])
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz; // slow rise time
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP; // push-pull output
 	GPIO_Init(GPIOA, &GPIO_InitStructure); // GPIOD init
-	Bsp_Init();
+	GPIO_WriteBit(GPIOD,GPIO_Pin_2,Bit_SET);
+	GPIO_WriteBit(GPIOA,GPIO_Pin_8,Bit_RESET);
+
+	//Bsp_Init();
 	Usart_Init();
-	Spi_Init();
+	//Spi_Init();
+	GPIO_WriteBit(GPIOD,GPIO_Pin_2,Bit_RESET);
+	GPIO_WriteBit(GPIOA,GPIO_Pin_8,Bit_SET);
 	while(1)
 	{
 		/* make some float calculations */
@@ -70,7 +75,7 @@ int main(int argc, char *argv[])
 			delay--;
 			__NOP();
 		}
-		iprintf("testing\n\r");
+		printf("testing\n\r");
 	}
 
 }
