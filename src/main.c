@@ -15,8 +15,8 @@
 
 void Bsp_Init(void)
 {
-	//Usart_Init();
-	//Spi_Init();
+	Usart_Init();
+	Spi_Init();
 	return;
 } 
 
@@ -39,9 +39,7 @@ int main(int argc, char *argv[])
 	GPIO_WriteBit(GPIOD,GPIO_Pin_2,Bit_SET);
 	GPIO_WriteBit(GPIOA,GPIO_Pin_8,Bit_RESET);
 
-	//Bsp_Init();
-	Usart_Init();
-	//Spi_Init();
+	Bsp_Init();
 	GPIO_WriteBit(GPIOD,GPIO_Pin_2,Bit_RESET);
 	GPIO_WriteBit(GPIOA,GPIO_Pin_8,Bit_SET);
 	while(1)
