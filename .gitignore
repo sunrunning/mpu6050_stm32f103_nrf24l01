@@ -1,0 +1,11 @@
+*.o
+*.a
+*.bin
+*.hex
+*.elf
+*.info_code
+*.info_size
+*.info_elf
+*.info_symbol
+cscope.*
+tags
