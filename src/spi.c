@@ -4,6 +4,7 @@
 #include "stm32f10x_gpio.h"
 #include "stm32f10x_rcc.h"
 
+#include "spi.h"
 
 
 
@@ -14,7 +15,13 @@ void Spi_Init(void)
 	GPIO_InitTypeDef GPIO_InitStructure;
 	SPI_InitTypeDef SPI_InitStructure;
 
-	RCC_APB2PeriphClockCmd( RCC_APB2Periph_GPIOA|RCC_APB2Periph_SPI1, ENABLE );//PORTA，SPI1时钟使能 
+	RCC_APB2PeriphClockCmd( RCC_APB2Periph_GPIOA|RCC_APB2Periph_SPI1|RCC_APB2Periph_GPIOC, ENABLE );//PORTA,C,SPI1时钟使能 
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;//PC4 <---> CS_pin
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+	GPIO_InitStructure.GPIO_PuPd  = GPIO_PuPd_UP;
+	GPIO_Init(GPIOC, &GPIO_InitStructure);//PC4 as CS
 	
 	GPIO_PinAFConfig(GPIOA, GPIO_PinSource5,GPIO_AF_SPI1);
 	GPIO_PinAFConfig(GPIOA, GPIO_PinSource7,GPIO_AF_SPI1);
@@ -28,7 +35,7 @@ void Spi_Init(void)
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
 
-	SPI_InitStructure.SPI_Direction = SPI_Direction_2Lines_FullDuplex;  //设置SPI单向或者双向的数据模式:SPI设置为双线双向全双工
+	SPI_InitStructure.SPI_Direction = SPI_Direction_2Lines_FullDuplex;//设置SPI单向或者双向的数据模式:SPI设置为双线双向全双工
 	SPI_InitStructure.SPI_Mode = SPI_Mode_Master; //设置SPI工作模式:设置为主SPI
 	SPI_InitStructure.SPI_DataSize = SPI_DataSize_8b; //设置SPI的数据大小:SPI发送接收8位帧结构
 	SPI_InitStructure.SPI_CPOL = SPI_CPOL_Low; //选择了串行时钟的稳态:时钟悬空高
@@ -44,4 +51,32 @@ void Spi_Init(void)
 }
 
 
+
+void SPI1_NSS_L(void)
+{
+	GPIO_WriteBit(GPIOC,GPIO_Pin_4,Bit_RESET);
+}
+
+void SPI1_NSS_H(void)
+{
+	GPIO_WriteBit(GPIOC,GPIO_Pin_4,Bit_SET);
+}
+
+
+
+
+unsigned char SPI1_Send_Byte(unsigned char dat)
+{
+	/* Loop while DR register in not emplty */
+	while(SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_TXE) == RESET);
+
+	/* Send byte through the SPIx peripheral */
+	SPI_I2S_SendData(SPI1, dat);
+
+	/* Wait to receive a byte */
+	while(SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_RXNE) == RESET);
+
+	/* Return the byte read from the SPI bus */
+	return SPI_I2S_ReceiveData(SPI1);
+}
 
