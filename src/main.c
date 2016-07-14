@@ -12,22 +12,50 @@
 
 #include "uart.h"
 #include "spi.h"
+#include "nrf24l01.h"
+
+
+static volatile uint32_t gDelaycounter;
+
+void Sys_Init(void)
+{
+	SysTick_Config(SystemCoreClock/1000);
+	return;
+}
+
+void Delay_ms(volatile uint32_t ms)
+{
+	gDelaycounter = ms;
+	while(gDelaycounter != 0);
+}
+
+void Delaycounter_De(void)
+{
+	if (gDelaycounter != 0)
+		gDelaycounter--;
+}
+
+void SysTick_Handler(void)
+{
+	Delaycounter_De();
+}
 
 void Bsp_Init(void)
 {
+
 	Usart_Init();
-	Spi_Init();
+	//Spi_Init();
 	return;
 } 
 
 int main(int argc, char *argv[])
-{
+{ 
  	GPIO_InitTypeDef GPIO_InitStructure;
- 	u32 delay;
-/* GPIOC Periph clock enable */
+
+	/* GPIOC Periph clock enable */
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOD, ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
-/* Configure PD2 to mode: slow rise-time, pushpull output */
+	/* Configure PD2 to mode: slow rise-time, pushpull output */
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2; // GPIO No. 2
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz; // slow rise time
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP; // push-pull output
@@ -38,42 +66,29 @@ int main(int argc, char *argv[])
 	GPIO_Init(GPIOA, &GPIO_InitStructure); // GPIOD init
 	GPIO_WriteBit(GPIOD,GPIO_Pin_2,Bit_SET);
 	GPIO_WriteBit(GPIOA,GPIO_Pin_8,Bit_RESET);
-
+	Sys_Init();
 	Bsp_Init();
+	NRF24l01_Init();
+	NRF24l01_TX_Mode();
 	GPIO_WriteBit(GPIOD,GPIO_Pin_2,Bit_RESET);
 	GPIO_WriteBit(GPIOA,GPIO_Pin_8,Bit_SET);
 	while(1)
 	{
-		/* make some float calculations */
-		float x = 42, y = 23, z = 7;
-		int i = 0;
-		for ( i = 0; i < 6; i++ )
-		{
-			z = (x*y)/z;
-		};
 		/* GPIO PC12 set, pin=high, LED_E off */
 		//GPIOD->BSRR = GPIO_BSRR_BS6;
 		GPIO_WriteBit(GPIOD,GPIO_Pin_2,Bit_SET);
 		GPIO_WriteBit(GPIOA,GPIO_Pin_8,Bit_RESET);
 		/* delay --> compiler optimizer settings must be "-O0" */
-		delay=500000;
-		while(delay)
-		{
-			__NOP();
-			delay--;
-		}
+		Delay_ms(500);
+		
 		/* GPIO PC12 reset, pin=low, LED_E on */
 		//GPIOD->BSRR = GPIO_BSRR_BR6;
 		GPIO_WriteBit(GPIOD,GPIO_Pin_2,Bit_RESET);
 		GPIO_WriteBit(GPIOA,GPIO_Pin_8,Bit_SET);
 		/* delay --> compiler optimizer settings must be "-O0" */
-		delay=500000;
-		while(delay)
-		{
-			delay--;
-			__NOP();
-		}
+		Delay_ms(500);
+
 		printf("testing\n\r");
-	}
+	} 
 
 }

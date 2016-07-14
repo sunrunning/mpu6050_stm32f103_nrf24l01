@@ -1,4 +1,6 @@
 
+#define ADR_WIDTH 5
+
 //Define the commands for operate the nRF24L01P
 #define READ_nRF_REG    0x00  // Command for read register
 #define WRITE_nRF_REG   0x20 	// Command for write register
@@ -38,21 +40,22 @@
 
 
 //Define the layer1:HW operation
-unsigned char NRF24l01_SPI_Send_Byte(unsigned char dat);
+unsigned char NRF24l01_Send_Byte(unsigned char dat);
 void NRF24l01_Init(void);
 //void NRF24l01_Init_Soft(void);
-void NRF24l01_SPI_NSS_L(void);
-void NRF24l01_SPI_NSS_H(void);
+void NRF24l01_NSS_L(void);
+void NRF24l01_NSS_H(void);
 void NRF24l01_CE_L(void);
 void NRF24l01_CE_H(void);
 //Define the layer2:Reg operation
-unsigned char NRF24l01_SPI_WR_Reg(unsigned char reg, unsigned char value);
-unsigned char NRF24l01_SPI_RD_Reg(unsigned char reg);
-unsigned char NRF24l01_SPI_Read_Buf(unsigned char reg, unsigned char *pBuf, unsigned char Len);
-unsigned char NRF24l01_SPI_Write_Buf(unsigned char reg, unsigned char *pBuf, unsigned char Len);
+unsigned char NRF24l01_WR_Reg(unsigned char reg, unsigned char value);
+unsigned char NRF24l01_RD_Reg(unsigned char reg);
+unsigned char NRF24l01_Read_Buf(unsigned char reg, unsigned char *pBuf, unsigned char Len);
+unsigned char NRF24l01_Write_Buf(unsigned char reg, unsigned char *pBuf, unsigned char Len);
 
 
 //Define the layer3:application operation
+void NRF24l01_TX_Mode(void);
 /****************************************
 
 All the functions is in "nRF24l01P.h"

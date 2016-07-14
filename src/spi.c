@@ -17,21 +17,21 @@ void Spi_Init(void)
 
 	RCC_APB2PeriphClockCmd( RCC_APB2Periph_GPIOA|RCC_APB2Periph_SPI1|RCC_APB2Periph_GPIOC, ENABLE );//PORTA,C,SPI1时钟使能 
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;//PC4 <---> CS_pin
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-	GPIO_InitStructure.GPIO_PuPd  = GPIO_PuPd_UP;
+	//GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+	//GPIO_InitStructure.GPIO_PuPd  = GPIO_PuPd_UP;
 	GPIO_Init(GPIOC, &GPIO_InitStructure);//PC4 as CS
 	
-	GPIO_PinAFConfig(GPIOA, GPIO_PinSource5,GPIO_AF_SPI1);
-	GPIO_PinAFConfig(GPIOA, GPIO_PinSource7,GPIO_AF_SPI1);
-	GPIO_PinAFConfig(GPIOA, GPIO_PinSource6,GPIO_AF_SPI1);
+	//GPIO_PinAFConfig(GPIOA, GPIO_PinSource5,GPIO_AF_SPI1);
+	//GPIO_PinAFConfig(GPIOA, GPIO_PinSource7,GPIO_AF_SPI1);
+	//GPIO_PinAFConfig(GPIOA, GPIO_PinSource6,GPIO_AF_SPI1);
 
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5 | GPIO_Pin_6 | GPIO_Pin_7;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF; //PA5.6.7用AF功能
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP; //PA5.6.7用AF功能
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-	GPIO_InitStructure.GPIO_PuPd  = GPIO_PuPd_DOWN;
+	//GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+	//GPIO_InitStructure.GPIO_PuPd  = GPIO_PuPd_DOWN;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
 

@@ -6,6 +6,7 @@ OBJS+=startup.o
 OBJS+=main.o
 OBJS+=uart.o
 OBJS+=spi.o
+OBJS+=nrf24l01.o
 
 
 all: src
