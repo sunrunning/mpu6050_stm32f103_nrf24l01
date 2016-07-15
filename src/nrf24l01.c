@@ -30,7 +30,7 @@ void NRF24l01_Delay_us(unsigned long us)
 }
 
 
-void NRF24l01_Init(void)
+void NRF24l01_HW_Init(void)
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
 	RCC_APB2PeriphClockCmd( RCC_APB2Periph_GPIOA, ENABLE );//PORTA时钟使能 
