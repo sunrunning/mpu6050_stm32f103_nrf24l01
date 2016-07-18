@@ -41,7 +41,7 @@
 
 //Define the layer1:HW operation
 unsigned char NRF24l01_Send_Byte(unsigned char dat);
-void NRF24l01_Init(void);
+void NRF24l01_HW_Init(void);
 //void NRF24l01_Init_Soft(void);
 void NRF24l01_NSS_L(void);
 void NRF24l01_NSS_H(void);

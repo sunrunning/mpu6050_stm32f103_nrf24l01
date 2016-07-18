@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
 	GPIO_WriteBit(GPIOA,GPIO_Pin_8,Bit_RESET);
 	Sys_Init();
 	Bsp_Init();
-	NRF24l01_Init();
+	NRF24l01_HW_Init();
 	NRF24l01_TX_Mode();
 	GPIO_WriteBit(GPIOD,GPIO_Pin_2,Bit_RESET);
 	GPIO_WriteBit(GPIOA,GPIO_Pin_8,Bit_SET);
