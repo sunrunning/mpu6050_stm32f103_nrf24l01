@@ -161,3 +161,31 @@ void NRF24l01_TX_Mode(void)
 	NRF24l01_CE_H();
 	
 }
+
+
+
+
+void NRF24l01_TX_Packet(unsigned char * tx_buf)
+{
+	NRF24l01_CE_L();
+	NRF24l01_WR_Reg(WRITE_nRF_REG+NRFRegSTATUS, 0x7E); // Write 1 to clear bit
+	NRF24l01_Delay_us(20);
+	NRF24l01_WR_Reg(WRITE_nRF_REG + CONFIG, 0x3A); // enable power up and ptx
+	NRF24l01_Delay_us(20);
+	NRF24l01_NSS_L();  
+	NRF24l01_Send_Byte(FLUSH_TX);
+	NRF24l01_Send_Byte(0x00);
+	NRF24l01_NSS_H();  
+	NRF24l01_Delay_us(20);
+	NRF24l01_Write_Buf(WR_TX_PLOAD, tx_buf, TX_PLOAD_WIDTH);
+ 	
+	//NRF24l01_WR_Reg(WRITE_nRF_REG+NRFRegSTATUS, 0x20); // Write 1 to clear bit
+	//NRF24l01_CE_H();
+	//NRF24l01_Delay_us(200);
+	NRF24l01_CE_H();
+	//NRF24l01_CE_L();
+	NRF24l01_Delay_us(300000);
+	NRF24l01_CE_L();
+	
+
+}

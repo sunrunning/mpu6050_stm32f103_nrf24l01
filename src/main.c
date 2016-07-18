@@ -16,6 +16,13 @@
 
 
 static volatile uint32_t gDelaycounter;
+unsigned char Tx_Buf[32]=
+{
+	0x01,0x02,0x03,0x4,0x05,0x06,0x07,0x08,
+	0x09,0x10,0x11,0x12,0x13,0x14,0x15,0x16,
+	0x17,0x18,0x19,0x20,0x21,0x22,0x23,0x24,
+	0x25,0x26,0x27,0x28,0x29,0x30,0x31,0x32,
+};
 
 void Sys_Init(void)
 {
@@ -50,6 +57,7 @@ void Bsp_Init(void)
 
 int main(int argc, char *argv[])
 { 
+	unsigned char status;
  	GPIO_InitTypeDef GPIO_InitStructure;
 
 	/* GPIOC Periph clock enable */
@@ -79,7 +87,23 @@ int main(int argc, char *argv[])
 		GPIO_WriteBit(GPIOD,GPIO_Pin_2,Bit_SET);
 		GPIO_WriteBit(GPIOA,GPIO_Pin_8,Bit_RESET);
 		/* delay --> compiler optimizer settings must be "-O0" */
-		Delay_ms(500);
+		NRF24l01_TX_Packet(Tx_Buf);
+		Delay_ms(10);
+		status=NRF24l01_RD_Reg(NRFRegSTATUS);
+		printf(" status is: %d",status);
+		status=NRF24l01_RD_Reg(0x17);
+		printf(" fifo is: %d",status);
+		status=NRF24l01_RD_Reg(RF_SETUP);
+		printf(" rf setup is: %d",status);
+		status=NRF24l01_RD_Reg(RF_CH);
+		printf(" rf chanel is: %d",status);
+		status=NRF24l01_RD_Reg(CONFIG);
+		printf(" config is: %d",status);
+		GPIO_ResetBits(GPIOA, GPIO_Pin_3);
+		NRF24l01_WR_Reg(WRITE_nRF_REG + CONFIG, 0x3B); // enable power up and prx
+		
+		Delay_ms(3000);
+		
 		
 		/* GPIO PC12 reset, pin=low, LED_E on */
 		//GPIOD->BSRR = GPIO_BSRR_BR6;
@@ -87,8 +111,8 @@ int main(int argc, char *argv[])
 		GPIO_WriteBit(GPIOA,GPIO_Pin_8,Bit_SET);
 		/* delay --> compiler optimizer settings must be "-O0" */
 		Delay_ms(500);
-
-		printf("testing\n\r");
+		//ret = NRF24l01_RD_Reg(0x00);
+		//printf("0x00 is 0x%X\n\r",ret);
 	} 
 
 }
