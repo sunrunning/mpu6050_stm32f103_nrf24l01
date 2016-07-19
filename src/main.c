@@ -57,7 +57,7 @@ void Bsp_Init(void)
 
 int main(int argc, char *argv[])
 { 
-	unsigned char status;
+	unsigned char status=0xa5;
  	GPIO_InitTypeDef GPIO_InitStructure;
 
 	/* GPIOC Periph clock enable */
@@ -90,19 +90,19 @@ int main(int argc, char *argv[])
 		NRF24l01_TX_Packet(Tx_Buf);
 		Delay_ms(10);
 		status=NRF24l01_RD_Reg(NRFRegSTATUS);
-		printf(" status is: %d",status);
+		printf(" status is: %d\n\r",status);
 		status=NRF24l01_RD_Reg(0x17);
-		printf(" fifo is: %d",status);
+		printf(" fifo is: %d\n\r",status);
 		status=NRF24l01_RD_Reg(RF_SETUP);
-		printf(" rf setup is: %d",status);
+		printf(" rf setup is: %d\n\r",status);
 		status=NRF24l01_RD_Reg(RF_CH);
-		printf(" rf chanel is: %d",status);
+		printf(" rf chanel is: %d\n\r",status);
 		status=NRF24l01_RD_Reg(CONFIG);
-		printf(" config is: %d",status);
+		printf(" config is: %d\n\r",status);
 		GPIO_ResetBits(GPIOA, GPIO_Pin_3);
 		NRF24l01_WR_Reg(WRITE_nRF_REG + CONFIG, 0x3B); // enable power up and prx
 		
-		Delay_ms(3000);
+		Delay_ms(1000);
 		
 		
 		/* GPIO PC12 reset, pin=low, LED_E on */
