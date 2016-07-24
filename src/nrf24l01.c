@@ -70,7 +70,7 @@ void NRF24l01_CE_H(void)
 unsigned char NRF24l01_Send_Byte(unsigned char dat)
 {
 	return SPI1_Send_Byte(dat);
-}
+ }
 
 unsigned char NRF24l01_WR_Reg(unsigned char reg, unsigned char value)
 {
@@ -110,12 +110,12 @@ unsigned char NRF24l01_Read_Buf(unsigned char reg, unsigned char *pBuf, unsigned
   for(i=0;i<Len;i++)
   {
      pBuf[i] = NRF24l01_Send_Byte(0);
-  }
+   }
 
 	NRF24l01_NSS_H();
 
 	return(status);                    // return NRF24l01 status unsigned char
-}
+} 
 
 
 unsigned char NRF24l01_Write_Buf(unsigned char reg, unsigned char *pBuf, unsigned char Len)
@@ -136,7 +136,7 @@ unsigned char NRF24l01_Write_Buf(unsigned char reg, unsigned char *pBuf, unsigne
 
 
 void NRF24l01_TX_Mode(void)
-{
+{  
 	NRF24l01_CE_L();
 
 	NRF24l01_WR_Reg(WRITE_nRF_REG + SETUP_AW, 0x03); // setup add width 5 bytes
@@ -162,6 +162,36 @@ void NRF24l01_TX_Mode(void)
 	
 }
 
+void NRF24l01_RX_Mode(void)
+{ 
+	NRF24l01_CE_L();
+	NRF24l01_WR_Reg(WRITE_nRF_REG + CONFIG, 0x39);
+	NRF24l01_Delay_us(20);
+	NRF24l01_WR_Reg(WRITE_nRF_REG + SETUP_AW, 0x03); // setup add width 5 bytes
+	NRF24l01_Delay_us(20);
+	NRF24l01_WR_Reg(WRITE_nRF_REG + RF_CH,0x02);// setup frequency
+	NRF24l01_Delay_us(20);
+	NRF24l01_WR_Reg(WRITE_nRF_REG + RF_SETUP,  0x07);// setup power and rate
+	NRF24l01_Delay_us(20);
+	NRF24l01_WR_Reg(WRITE_nRF_REG + RX_PW_P0,32); //Number of bytes in data P0
+	NRF24l01_Delay_us(20);
+	NRF24l01_WR_Reg(WRITE_nRF_REG + EN_RXADDR, 0x01); //Enable data P0
+	NRF24l01_Delay_us(20);
+	NRF24l01_Write_Buf(WRITE_nRF_REG + TX_ADDR, TX_ADDRESS, ADR_WIDTH); // write address into tx_add
+	NRF24l01_Delay_us(20);
+	NRF24l01_Write_Buf(WRITE_nRF_REG + RX_ADDR_P0, RX_ADDRESS, ADR_WIDTH); // write address into rx_add_p0
+	NRF24l01_Delay_us(20);
+	NRF24l01_WR_Reg(WRITE_nRF_REG + EN_AA, 0x00);     //disable auto-ack for all channels      
+	NRF24l01_Delay_us(20);
+	
+	
+	
+	NRF24l01_WR_Reg(WRITE_nRF_REG + CONFIG, 0x33); // enable power up and prx
+	NRF24l01_Delay_us(20);
+	NRF24l01_CE_H();
+	NRF24l01_Delay_us(2000);
+	//NRF24l01_CE_L();
+}
 
 
 
@@ -184,8 +214,35 @@ void NRF24l01_TX_Packet(unsigned char * tx_buf)
 	//NRF24l01_Delay_us(200);
 	NRF24l01_CE_H();
 	//NRF24l01_CE_L();
-	NRF24l01_Delay_us(300000);
+	NRF24l01_Delay_us(30000);
 	NRF24l01_CE_L();
 	
 
+}
+
+
+
+unsigned char NRF24l01_RX_Packet(unsigned char* rx_buf)
+{
+	unsigned char flag=0;
+	unsigned char status;
+	status=NRF24l01_RD_Reg(NRFRegSTATUS);
+	NRF24l01_CE_L();
+	NRF24l01_Delay_us(20);
+	if(status & 0x40) //Data Ready RX FIFO interrupt
+	{
+		NRF24l01_Read_Buf(RD_RX_PLOAD,rx_buf,RX_PLOAD_WIDTH);
+		flag =1;
+	}
+	NRF24l01_Delay_us(20);
+	NRF24l01_WR_Reg(WRITE_nRF_REG+NRFRegSTATUS, 0x40); // Write 1 to clear bit
+	NRF24l01_Delay_us(20);
+	NRF24l01_NSS_L();  
+	NRF24l01_Send_Byte(0xE2);//Flush RX FIFO    
+	NRF24l01_NSS_H();  
+	NRF24l01_Delay_us(20);
+	NRF24l01_WR_Reg(WRITE_nRF_REG + CONFIG, 0x33); // enable power up and prx
+	NRF24l01_CE_H();
+	NRF24l01_Delay_us(20);
+	return flag;
 }

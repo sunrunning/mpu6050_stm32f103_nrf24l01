@@ -1,6 +1,7 @@
 
 #define ADR_WIDTH 5
 #define TX_PLOAD_WIDTH 32
+#define RX_PLOAD_WIDTH 32
 
 //Define the commands for operate the nRF24L01P
 #define READ_nRF_REG    0x00  // Command for read register
@@ -57,6 +58,8 @@ unsigned char NRF24l01_Write_Buf(unsigned char reg, unsigned char *pBuf, unsigne
 //Define the layer3:application operation
 void NRF24l01_TX_Mode(void);
 void NRF24l01_TX_Packet(unsigned char * tx_buf);
+void NRF24l01_RX_Mode(void);
+unsigned char NRF24l01_RX_Packet(unsigned char* rx_buf);
 /****************************************
 
 All the functions is in "nRF24l01P.h"

@@ -14,6 +14,7 @@
 #include "spi.h"
 #include "nrf24l01.h"
 
+#define TX_MODE 0 /*Flag for Tx_data or Rx_data, 1 is for Tx, 0 for Rx*/
 
 static volatile uint32_t gDelaycounter;
 unsigned char Tx_Buf[32]=
@@ -23,6 +24,8 @@ unsigned char Tx_Buf[32]=
 	0x17,0x18,0x19,0x20,0x21,0x22,0x23,0x24,
 	0x25,0x26,0x27,0x28,0x29,0x30,0x31,0x32,
 };
+
+unsigned char Rx_Buf[32] = {};
 
 void Sys_Init(void)
 {
@@ -57,7 +60,7 @@ void Bsp_Init(void)
 
 int main(int argc, char *argv[])
 { 
-	unsigned char status=0xa5;
+	unsigned char status,i;
  	GPIO_InitTypeDef GPIO_InitStructure;
 
 	/* GPIOC Periph clock enable */
@@ -77,17 +80,21 @@ int main(int argc, char *argv[])
 	Sys_Init();
 	Bsp_Init();
 	NRF24l01_HW_Init();
+#if TX_MODE
 	NRF24l01_TX_Mode();
+#else
+	NRF24l01_RX_Mode();
+#endif
 	GPIO_WriteBit(GPIOD,GPIO_Pin_2,Bit_RESET);
 	GPIO_WriteBit(GPIOA,GPIO_Pin_8,Bit_SET);
 	while(1)
 	{
-		/* GPIO PC12 set, pin=high, LED_E off */
-		//GPIOD->BSRR = GPIO_BSRR_BS6;
+#if TX_MODE
+		GPIO_WriteBit(GPIOD,GPIO_Pin_2,Bit_RESET);
+		GPIO_WriteBit(GPIOA,GPIO_Pin_8,Bit_SET);
+		NRF24l01_TX_Packet(Tx_Buf);
 		GPIO_WriteBit(GPIOD,GPIO_Pin_2,Bit_SET);
 		GPIO_WriteBit(GPIOA,GPIO_Pin_8,Bit_RESET);
-		/* delay --> compiler optimizer settings must be "-O0" */
-		NRF24l01_TX_Packet(Tx_Buf);
 		Delay_ms(10);
 		status=NRF24l01_RD_Reg(NRFRegSTATUS);
 		printf(" status is: %d\n\r",status);
@@ -101,18 +108,23 @@ int main(int argc, char *argv[])
 		printf(" config is: %d\n\r",status);
 		GPIO_ResetBits(GPIOA, GPIO_Pin_3);
 		NRF24l01_WR_Reg(WRITE_nRF_REG + CONFIG, 0x3B); // enable power up and prx
-		
-		Delay_ms(1000);
-		
-		
-		/* GPIO PC12 reset, pin=low, LED_E on */
-		//GPIOD->BSRR = GPIO_BSRR_BR6;
+#else
 		GPIO_WriteBit(GPIOD,GPIO_Pin_2,Bit_RESET);
 		GPIO_WriteBit(GPIOA,GPIO_Pin_8,Bit_SET);
-		/* delay --> compiler optimizer settings must be "-O0" */
+		if(NRF24l01_RX_Packet(Rx_Buf))
+		{
+			GPIO_WriteBit(GPIOD,GPIO_Pin_2,Bit_SET);
+			GPIO_WriteBit(GPIOA,GPIO_Pin_8,Bit_RESET);
+			for(i = 0; i < 32; i++)
+			{
+				printf("%X",Rx_Buf[i]);		
+			}
+			printf("\n\r");
+			status = status;/*in case compiler will print error status unused*/
+		}
+#endif
+		
 		Delay_ms(500);
-		//ret = NRF24l01_RD_Reg(0x00);
-		//printf("0x00 is 0x%X\n\r",ret);
 	} 
 
 }
